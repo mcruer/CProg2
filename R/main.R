@@ -1,5 +1,21 @@
 
 
+#' Retrieve Monthly Data
+#'
+#' This function retrieves data from the specified SQL table.
+#'
+#' @param sql_table_name The name of the SQL table (default: "Monthly").
+#' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
+#' @param database The database name (default: NULL, will use `ezql_details_db`).
+#' @param address The server address (default: NULL, will use `ezql_details_add`).
+#' @return A tibble containing the data from the specified SQL table.
+#' @importFrom ezekiel ezql_get
+#' @export
+monthly <- function(sql_table_name = "Monthly", schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_get(sql_table_name, schema, database, address)
+}
+
+
 #' Retrieve Events Data
 #'
 #' This function retrieves data from the specified SQL table.
