@@ -23,11 +23,6 @@
 school_year <- function(date) {
   date <- lubridate::as_date(date)
 
-  # Ensure the input date is valid
-  if (is.na(date)) {
-    return(NA_character_)
-  }
-
   year_start <- dplyr::if_else(lubridate::month(date) < 9, lubridate::year(date) - 1, lubridate::year(date))
   year_suffix <- sprintf("%02d", year_start %% 100 + 1)
   stringr::str_c(year_start, "-", year_suffix)
@@ -58,11 +53,6 @@ school_year <- function(date) {
 #' @export
 fiscal_year <- function(date) {
   date <- lubridate::as_date(date)
-
-  # Ensure the input date is valid
-  if (is.na(date)) {
-    return(NA_character_)
-  }
 
   year_start <- dplyr::if_else(lubridate::month(date) < 4, lubridate::year(date) - 1, lubridate::year(date))
   year_suffix <- sprintf("%02d", year_start %% 100 + 1)

@@ -26,9 +26,12 @@ monthly <- function(sql_table_name = "Monthly", schema = NULL, database = NULL, 
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
 #' @importFrom ezekiel ezql_get
+#' @importFrom databased load_data
 #' @export
 events <- function(sql_table_name = "Events", schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_get(sql_table_name, schema, database, address)
+  ezekiel::ezql_get(sql_table_name, schema = schema, database = database, address = address) %>%
+    ezekiel::ezql_change_names(databased::load_data("events_sql_to_r")) %>%
+    ezekiel::ezql_set_data_types(databased::load_data("events_set_data_types"))
 }
 
 #' Convert Event-Level Data to Project-Level Data
@@ -42,11 +45,12 @@ events <- function(sql_table_name = "Events", schema = NULL, database = NULL, ad
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the project-level data.
 #' @importFrom ezekiel ezql_get
+#' @importFrom databased load_data
 #' @importFrom dplyr select starts_with all_of group_by summarize ungroup last
 #' @importFrom tidyr fill
 #' @export
 pt <- function(sql_table_name = "Events", schema = NULL, database = NULL, address = NULL) {
-  events_data <- events(sql_table_name, schema, database, address)
+  events_data <- events(sql_table_name, schema = schema, database = database, address = address)
 
   columns_to_sum <- events_data %>%
     dplyr::select(dplyr::starts_with("scope"), dplyr::starts_with("funding")) %>%
