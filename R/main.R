@@ -12,7 +12,9 @@
 #' @importFrom ezekiel ezql_get
 #' @export
 monthly <- function(sql_table_name = "Monthly", schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_get(sql_table_name, schema, database, address)
+  ezekiel::ezql_get(sql_table_name, schema, database, address) %>%
+    ezekiel::ezql_change_names(databased::load_data("events_sql_to_r")) %>%
+    ezekiel::ezql_set_data_types(databased::load_data("events_set_data_types"))
 }
 
 
@@ -77,4 +79,24 @@ pt <- function(sql_table_name = "Events", schema = NULL, database = NULL, addres
       dplyr::across(dplyr::all_of(columns_to_sum), sum)
     ) %>%
     dplyr::ungroup()
+}
+
+
+#' Retrieve Frankenstein Data
+#'
+#' This function retrieves data from the specified SQL table.
+#'
+#' @param sql_table_name The name of the SQL table (default: "Frankenstein").
+#' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
+#' @param database The database name (default: NULL, will use `ezql_details_db`).
+#' @param address The server address (default: NULL, will use `ezql_details_add`).
+#' @return A tibble containing the data from the specified SQL table.
+#' @importFrom ezekiel ezql_get
+#' @importFrom databased load_data
+#' @export
+frank <- function(sql_table_name = "Frankenstein", schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_get(sql_table_name, schema = schema, database = database, address = address) %>%
+    ezekiel::ezql_change_names(databased::load_data("events_sql_to_r")) %>%
+    ezekiel::ezql_set_data_types(databased::load_data("events_set_data_types")) %>%
+    gplyr::quickm(primary_capital_project, as.logical)
 }
