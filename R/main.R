@@ -92,6 +92,7 @@ pt <- function(sql_table_name = "Events", schema = NULL, database = NULL, addres
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
 #' @importFrom ezekiel ezql_get
+#' @importFrom gplyr quickm
 #' @importFrom databased load_data
 #' @export
 frank <- function(sql_table_name = "Frankenstein", schema = NULL, database = NULL, address = NULL) {
@@ -99,4 +100,15 @@ frank <- function(sql_table_name = "Frankenstein", schema = NULL, database = NUL
     ezekiel::ezql_change_names(databased::load_data("events_sql_to_r")) %>%
     ezekiel::ezql_set_data_types(databased::load_data("events_set_data_types")) %>%
     gplyr::quickm(primary_capital_project, as.logical)
+}
+
+#' Retrieve Ezekiel Rosetta Data
+#'
+#' This function retrieves data from the SQL table named "ezql_rosetta".
+#'
+#' @return A tibble containing the data from the "ezql_rosetta" SQL table.
+#' @importFrom ezekiel ezql_get
+#' @export
+ezql_rosetta <- function() {
+  ezekiel::ezql_get("ezql_rosetta")
 }
