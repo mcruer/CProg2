@@ -17,5 +17,6 @@ Imports:
     gplyr,
     lubridate,
     magrittr,
+    purrr,
     stringr,
     tidyr

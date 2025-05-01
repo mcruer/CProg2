@@ -1,4 +1,9 @@
-
+utils::globalVariables(c(
+  "panel", "panel_long", "project_type", "scope_otg_added", "scope_cc_spaces_added",
+  "project_name", "project_category", "location_city",
+  "description_project_type", "description_child_care", "description_category",
+  "primary_capital_project", "project_id", "parent_id"
+))
 
 #' Retrieve Monthly Data
 #'
