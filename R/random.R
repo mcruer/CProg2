@@ -58,3 +58,52 @@ fiscal_year <- function(date) {
   year_suffix <- sprintf("%02d", year_start %% 100 + 1)
   stringr::str_c(year_start, "-", year_suffix)
 }
+
+
+#' Calculate Infant Child Care Spaces
+#'
+#' Multiplies the number of rooms by 10 to estimate available infant child care spaces.
+#'
+#' @param rooms Number of rooms allocated for infant care.
+#'
+#' @return Estimated number of infant child care spaces.
+#' @export
+cc_spaces_infant <- function(rooms){
+  return(rooms * 10)
+}
+
+#' Calculate Toddler Child Care Spaces
+#'
+#' Multiplies the number of rooms by 15 to estimate available toddler child care spaces.
+#'
+#' @param rooms Number of rooms allocated for toddler care.
+#'
+#' @return Estimated number of toddler child care spaces.
+#' @export
+cc_spaces_toddler  <- function(rooms){
+  return(rooms * 15)
+}
+
+#' Calculate Preschool Child Care Spaces
+#'
+#' Multiplies the number of rooms by 24 to estimate available preschool child care spaces.
+#'
+#' @param rooms Number of rooms allocated for preschool care.
+#'
+#' @return Estimated number of preschool child care spaces.
+#' @export
+cc_spaces_preschool <- function(rooms){
+  return(rooms * 24)
+}
+
+#' Calculate Family Group Child Care Spaces
+#'
+#' Multiplies the number of rooms by 15 to estimate available family group child care spaces.
+#'
+#' @param rooms Number of rooms allocated for family group care.
+#'
+#' @return Estimated number of family group child care spaces.
+#' @export
+cc_spaces_fg <- function(rooms){
+  return(rooms * 15)
+}
