@@ -14,12 +14,10 @@ utils::globalVariables(c(
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
-#' @importFrom ezekiel ezql_get
+#' @importFrom ezekiel ezql_table
 #' @export
 monthly <- function(sql_table_name = "Monthly", schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_get(sql_table_name, schema, database, address) %>%
-    ezekiel::ezql_change_names(databased::load_data("events_sql_to_r")) %>%
-    ezekiel::ezql_set_data_types(databased::load_data("events_set_data_types"))
+  ezekiel::ezql_table(table = sql_table_name, schema, database, address)
 }
 
 
@@ -32,13 +30,10 @@ monthly <- function(sql_table_name = "Monthly", schema = NULL, database = NULL, 
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
-#' @importFrom ezekiel ezql_get
-#' @importFrom databased load_data
+#' @importFrom ezekiel ezql_table
 #' @export
 events <- function(sql_table_name = "Events", schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_get(sql_table_name, schema = schema, database = database, address = address) %>%
-    ezekiel::ezql_change_names(databased::load_data("events_sql_to_r")) %>%
-    ezekiel::ezql_set_data_types(databased::load_data("events_set_data_types"))
+  ezekiel::ezql_table(table = sql_table_name, schema, database, address)
 }
 
 #' Convert Event-Level Data to Project-Level Data
@@ -51,8 +46,6 @@ events <- function(sql_table_name = "Events", schema = NULL, database = NULL, ad
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the project-level data.
-#' @importFrom ezekiel ezql_get
-#' @importFrom databased load_data
 #' @importFrom dplyr select starts_with all_of group_by summarize ungroup last
 #' @importFrom tidyr fill
 #' @export
@@ -97,23 +90,8 @@ pt <- function(sql_table_name = "Events", schema = NULL, database = NULL, addres
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
 #' @importFrom ezekiel ezql_get
-#' @importFrom gplyr quickm
-#' @importFrom databased load_data
 #' @export
 frank <- function(sql_table_name = "Frankenstein", schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_get(sql_table_name, schema = schema, database = database, address = address) %>%
-    ezekiel::ezql_change_names(databased::load_data("events_sql_to_r")) %>%
-    ezekiel::ezql_set_data_types(databased::load_data("events_set_data_types")) %>%
-    gplyr::quickm(primary_capital_project, as.logical)
+  ezekiel::ezql_table (table = sql_table_name, schema = schema, database = database, address = address)
 }
 
-#' Retrieve Ezekiel Rosetta Data
-#'
-#' This function retrieves data from the SQL table named "ezql_rosetta".
-#'
-#' @return A tibble containing the data from the "ezql_rosetta" SQL table.
-#' @importFrom ezekiel ezql_get
-#' @export
-ezql_rosetta <- function() {
-  ezekiel::ezql_get("ezql_rosetta")
-}
