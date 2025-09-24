@@ -4,15 +4,10 @@
 \alias{frank}
 \title{Retrieve Frankenstein Data}
 \usage{
-frank(
-  sql_table_name = "Frankenstein",
-  schema = NULL,
-  database = NULL,
-  address = NULL
-)
+frank(as_of = NULL, schema = NULL, database = NULL, address = NULL)
 }
 \arguments{
-\item{sql_table_name}{The name of the SQL table (default: "Frankenstein").}
+\item{as_of}{The date of the Frankenstein data to be pulled.}
 
 \item{schema}{The schema name (default: NULL, will use `ezql_details_schema`).}
 

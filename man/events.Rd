@@ -4,15 +4,10 @@
 \alias{events}
 \title{Retrieve Events Data}
 \usage{
-events(
-  sql_table_name = "Events",
-  schema = NULL,
-  database = NULL,
-  address = NULL
-)
+events(as_of = NULL, schema = NULL, database = NULL, address = NULL)
 }
 \arguments{
-\item{sql_table_name}{The name of the SQL table (default: "Events").}
+\item{as_of}{The date of the Events data to be pulled.}
 
 \item{schema}{The schema name (default: NULL, will use `ezql_details_schema`).}
 

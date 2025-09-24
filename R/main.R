@@ -5,6 +5,14 @@ utils::globalVariables(c(
   "primary_capital_project", "project_id", "parent_id"
 ))
 
+#' Column set for Events table
+#'
+#' Returns the canonical column order for the Events table used by downstream helpers.
+#' @return A character vector of column names.
+#' @examples
+#' \dontrun{
+#' events_columns()
+#' }
 #' @export
 events_columns <- function(){
   c(
@@ -119,6 +127,14 @@ events_columns <- function(){
   )
 }
 
+#' Column set for project-level (pt) output
+#'
+#' Returns the canonical column order for project-level summaries.
+#' @return A character vector of column names.
+#' @examples
+#' \dontrun{
+#' pt_columns()
+#' }
 #' @export
 pt_columns <- function() {
   setdiff(
@@ -138,15 +154,15 @@ pt_columns <- function() {
 #'
 #' This function retrieves data from the specified SQL table.
 #'
-#' @param sql_table_name The name of the SQL table (default: "Monthly").
+#' @param as_of The date of the Monthly data to be pulled.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
 #' @importFrom ezekiel ezql_table
 #' @export
-monthly <- function(sql_table_name = "Monthly", schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_table(table = sql_table_name, schema, database, address)
+monthly <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_table(table = "Monthly", as_of = as_of, schema=schema, database=database, address=address)
 }
 
 
@@ -154,15 +170,15 @@ monthly <- function(sql_table_name = "Monthly", schema = NULL, database = NULL, 
 #'
 #' This function retrieves data from the specified SQL table.
 #'
-#' @param sql_table_name The name of the SQL table (default: "Events").
+#' @param as_of The date of the Events data to be pulled.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
 #' @importFrom ezekiel ezql_table
 #' @export
-events <- function(sql_table_name = "Events", schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_table(table = sql_table_name, schema, database, address) %>%
+events <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_table(table = "Events", as_of, schema, database, address) %>%
     select(all_of(events_columns()))
 }
 
@@ -171,16 +187,17 @@ events <- function(sql_table_name = "Events", schema = NULL, database = NULL, ad
 #' This function takes event-level data and converts it to project-level data by summarizing
 #' specific columns and filling down other columns.
 #'
-#' @param sql_table_name The name of the SQL table (default: "Events").
+#' @param as_of The date of the Events data to be pulled.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the project-level data.
-#' @importFrom dplyr select starts_with all_of group_by summarize ungroup last
+#' @importFrom rlang .data
+#' @importFrom dplyr group_by mutate arrange summarize ungroup last across all_of any_of starts_with select
 #' @importFrom tidyr fill
 #' @export
-pt <- function(sql_table_name = "Events", schema = NULL, database = NULL, address = NULL) {
-  events_data <- events(sql_table_name, schema = schema, database = database, address = address) %>%
+pt <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+  events_data <- events(as_of = as_of, schema = schema, database = database, address = address) %>%
     suppressWarnings()
 
   columns_to_sum <- events_data %>%
@@ -192,7 +209,7 @@ pt <- function(sql_table_name = "Events", schema = NULL, database = NULL, addres
     #We need "any of" here because "date_most_recent_event" isn't yet included
     #in this data.
     dplyr::select(dplyr::any_of(pt_columns())) %>%
-    dplyr::select(-project_id, -parent_id,
+    dplyr::select(-.data$project_id, -.data$parent_id,
                   -dplyr::all_of(columns_to_sum)
                   ) %>%
     names()%>%
@@ -201,11 +218,11 @@ pt <- function(sql_table_name = "Events", schema = NULL, database = NULL, addres
     append("date_most_recent_event", after = 0)
 
   events_data %>%
-    dplyr::group_by(project_id, parent_id) %>%
+    dplyr::group_by(.data$project_id, .data$parent_id) %>%
     dplyr::mutate(date_most_recent_event = {
-      if (all(is.na(event_date))) as.Date(NA) else max(event_date, na.rm = TRUE)
+      if (all(is.na(.data$event_date))) as.Date(NA) else max(.data$event_date, na.rm = TRUE)
     }) %>%
-    dplyr::arrange(event_number, .by_group = TRUE) %>%
+    dplyr::arrange(.data$event_number, .by_group = TRUE) %>%
     tidyr::fill(dplyr::all_of(columns_to_fill_down), .direction = "down") %>%
     dplyr::summarize(
       dplyr::across(dplyr::all_of(columns_to_fill_down), dplyr::last),
@@ -220,14 +237,14 @@ pt <- function(sql_table_name = "Events", schema = NULL, database = NULL, addres
 #'
 #' This function retrieves data from the specified SQL table.
 #'
-#' @param sql_table_name The name of the SQL table (default: "Frankenstein").
+#' @param as_of The date of the Frankenstein data to be pulled.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
 #' @importFrom ezekiel ezql_get
 #' @export
-frank <- function(sql_table_name = "Frankenstein", schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_table (table = sql_table_name, schema = schema, database = database, address = address)
+frank <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_table (table = "Frankenstein", as_of = as_of, schema = schema, database = database, address = address)
 }
 

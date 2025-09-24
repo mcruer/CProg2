@@ -4,15 +4,10 @@
 \alias{monthly}
 \title{Retrieve Monthly Data}
 \usage{
-monthly(
-  sql_table_name = "Monthly",
-  schema = NULL,
-  database = NULL,
-  address = NULL
-)
+monthly(as_of = NULL, schema = NULL, database = NULL, address = NULL)
 }
 \arguments{
-\item{sql_table_name}{The name of the SQL table (default: "Monthly").}
+\item{as_of}{The date of the Monthly data to be pulled.}
 
 \item{schema}{The schema name (default: NULL, will use `ezql_details_schema`).}
 
