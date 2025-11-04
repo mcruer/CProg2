@@ -248,3 +248,30 @@ frank <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) 
   ezekiel::ezql_table (table = "Frankenstein", as_of = as_of, schema = schema, database = database, address = address)
 }
 
+
+#' @export
+comms_data <- function(
+    as_of = NULL,
+    since_2018 = TRUE){
+  frank <- frank(as_of)
+  pt <- pt(as_of)
+
+  since_2018 <- TRUE
+
+  frank %>%
+    dplyr::filter(primary_capital_project) %>%
+    gplyr::filter_out(project_id, "19-337") %>%
+    gplyr::filter_out(project_id, "34.2-008") %>%
+    gplyr::filter_out(project_id, "38-075") %>%
+    dplyr::filter(!since_2018 | date_ori > lubridate::ymd("2018-06-01")) %>%
+    gplyr::filter_out(construction_status, "Cancel") %>%
+    dplyr::select(project_id) %>%
+    dplyr::left_join(pt) %>%
+    dplyr::mutate(
+      is_childcare = project_category == "Child Care",
+      french_board = dplyr::between(board_number, 55.5, 99)
+    ) %>%
+    dplyr::select(project_id, is_childcare, french_board)
+
+
+}
