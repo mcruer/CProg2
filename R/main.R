@@ -251,12 +251,10 @@ frank <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) 
 
 #' @export
 comms_data <- function(
-    as_of = NULL,
+    as_of,
     since_2018 = TRUE){
   frank <- frank(as_of)
   pt <- pt(as_of)
-
-  since_2018 <- TRUE
 
   frank %>%
     dplyr::filter(primary_capital_project) %>%
