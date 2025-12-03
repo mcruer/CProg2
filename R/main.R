@@ -26,7 +26,7 @@ events_columns <- function(){
     "board_number",
     "board_name",
     "project_name",
-    "project_name_offical",
+    "project_name_official",
     "panel",
     "project_type",
     "project_category",
