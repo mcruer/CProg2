@@ -1,6 +1,6 @@
 #' @keywords internal
 get_panel_long_e <- function(panel) {
-  case_when(
+  dplyr::case_when(
     panel == "ELE" ~ "elementary",
     panel == "SEC" ~ "secondary",
     panel == "ELE/SEC" ~ "elementary/secondary",
@@ -10,55 +10,55 @@ get_panel_long_e <- function(panel) {
 
 #' @keywords internal
 get_description_project_type_e <- function(project_type, scope_otg_added, panel_long, project_name) {
-  case_when(
-    project_type == "New Construction" ~ str_c(
+  dplyr::case_when(
+    project_type == "New Construction" ~ stringr::str_c(
       "A new ",
-      if_else(scope_otg_added > 0, str_c(scope_otg_added, " pupil place "), ""),
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(scope_otg_added, " pupil place "), ""),
       panel_long, " school (", project_name, ") "
     ),
-    project_type == "Addition" ~ str_c(
+    project_type == "Addition" ~ stringr::str_c(
       "An addition at ", project_name,
-      if_else(scope_otg_added > 0, str_c(" adding ", scope_otg_added, " pupil places "), "")
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(" adding ", scope_otg_added, " pupil places "), "")
     ),
-    project_type == "Retrofit" ~ str_c(
+    project_type == "Retrofit" ~ stringr::str_c(
       "A retrofit at ", project_name,
-      if_else(scope_otg_added > 0, str_c(" adding ", scope_otg_added, " pupil places "), "")
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(" adding ", scope_otg_added, " pupil places "), "")
     ),
-    project_type == "Purchase" ~ str_c(
+    project_type == "Purchase" ~ stringr::str_c(
       "The purchase of a ", panel_long, " school",
-      if_else(scope_otg_added > 0, str_c(" adding ", scope_otg_added, " pupil places "), "")
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(" adding ", scope_otg_added, " pupil places "), "")
     ),
-    project_type == "Demolition" ~ str_c("A demolition at ", project_name, " "),
-    project_type == "Land Acquisition" ~ str_c("A land acquisition at ", project_name, " "),
-    TRUE ~ str_c(
+    project_type == "Demolition" ~ stringr::str_c("A demolition at ", project_name, " "),
+    project_type == "Land Acquisition" ~ stringr::str_c("A land acquisition at ", project_name, " "),
+    TRUE ~ stringr::str_c(
       "A project at ", project_name,
-      if_else(scope_otg_added > 0, str_c(" adding ", scope_otg_added, " pupil places "), "")
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(" adding ", scope_otg_added, " pupil places "), "")
     )
   )
 }
 
 #' @keywords internal
 get_description_child_care_e <- function(scope_cc_spaces_added) {
-  case_when(
-    scope_cc_spaces_added > 0 ~ str_c("(including ", scope_cc_spaces_added, " licenced child care spaces) "),
+  dplyr::case_when(
+    scope_cc_spaces_added > 0 ~ stringr::str_c("(including ", scope_cc_spaces_added, " licenced child care spaces) "),
     TRUE ~ ""
   )
 }
 
 #' @keywords internal
 get_description_category_e <- function(project_category, location_city) {
-  city_part <- if_else(!is.na(location_city), str_c(" in ", location_city), "")
-  case_when(
-    project_category == "ASD Pilot" ~ str_c("to address ASD needs", city_part, "."),
-    project_category == "Accommodation Pressure" ~ str_c("to address accommodation pressure", city_part, "."),
-    project_category %in% c("Child Care", "Community Based Child Care") ~ str_c("to address child care needs", city_part, "."),
-    project_category == "Condition" ~ str_c("to address facility condition", city_part, "."),
-    project_category == "Consolidation" ~ str_c("to consolidate local schools", city_part, "."),
-    project_category == "FDK" ~ str_c("to provide FDK capacity", city_part, "."),
-    project_category %in% c("FL Capital Transitional", "French Language Access") ~ str_c("to address French Language Access", city_part, "."),
-    TRUE ~ str_c(city_part)
+  city_part <- dplyr::if_else(!is.na(location_city), stringr::str_c(" in ", location_city), "")
+  dplyr::case_when(
+    project_category == "ASD Pilot" ~ stringr::str_c("to address ASD needs", city_part, "."),
+    project_category == "Accommodation Pressure" ~ stringr::str_c("to address accommodation pressure", city_part, "."),
+    project_category %in% c("Child Care", "Community Based Child Care") ~ stringr::str_c("to address child care needs", city_part, "."),
+    project_category == "Condition" ~ stringr::str_c("to address facility condition", city_part, "."),
+    project_category == "Consolidation" ~ stringr::str_c("to consolidate local schools", city_part, "."),
+    project_category == "FDK" ~ stringr::str_c("to provide FDK capacity", city_part, "."),
+    project_category %in% c("FL Capital Transitional", "French Language Access") ~ stringr::str_c("to address French Language Access", city_part, "."),
+    TRUE ~ stringr::str_c(city_part)
   ) %>%
-    str_trim()
+    stringr::str_trim()
 }
 
 
@@ -116,36 +116,36 @@ get_description_category_e <- function(project_category, location_city) {
 #' @export
 add_description_e <- function(pt) {
   pt %>%
-    mutate(
+    dplyr::mutate(
       panel_long = get_panel_long_e(panel),
       description_project_type = get_description_project_type_e(project_type,
                                                                 scope_otg_added,
                                                                 panel_long,
                                                                 project_name %>%
-                                                                  str_remove(" Addition$") %>%
-                                                                  str_squish()
+                                                                  stringr::str_remove(" Addition$") %>%
+                                                                  stringr::str_squish()
       ),
       description_child_care = get_description_child_care_e(scope_cc_spaces_added),
       description_category = get_description_category_e(project_category, location_city),
-      description_e = if_else(is.na(project_name)|panel == "OFF-ADM", NA_character_,
-                              pmap_chr(
+      description_e = dplyr::if_else(is.na(project_name)|panel == "OFF-ADM", NA_character_,
+                              purrr::pmap_chr(
                                 list(description_project_type, description_child_care, description_category) %>%
-                                  map(replace_na, ""),
+                                  purrr::map(tidyr::replace_na, ""),
                                 ~ c(..1, ..2, ..3) %>%
-                                  discard(~ .x == "") %>%
-                                  str_c(collapse = " ") %>%
-                                  str_replace_all("\\)\\s*\\(", ", ") %>%
-                                  str_squish()
+                                  purrr::discard(~ .x == "") %>%
+                                  stringr::str_c(collapse = " ") %>%
+                                  stringr::str_replace_all("\\)\\s*\\(", ", ") %>%
+                                  stringr::str_squish()
                               ))
     ) %>%
-    select(-panel_long, -description_project_type, -description_child_care, -description_category)
+    dplyr::select(-panel_long, -description_project_type, -description_child_care, -description_category)
 }
 
 
 
 #' @keywords internal
 get_panel_long_f <- function(panel) {
-  case_when(
+  dplyr::case_when(
     panel == "ELE" ~ "élémentaire",
     panel == "SEC" ~ "secondaire",
     panel == "ELE/SEC" ~ "élémentaire/secondaire",
@@ -155,56 +155,56 @@ get_panel_long_f <- function(panel) {
 
 #' @keywords internal
 get_description_project_type_f <- function(project_type, scope_otg_added, panel_long, project_name) {
-  case_when(
-    project_type == "New Construction" ~ str_c(
+  dplyr::case_when(
+    project_type == "New Construction" ~ stringr::str_c(
       "Une nouvelle école ",
       panel_long, " de ",
-      if_else(scope_otg_added > 0, str_c(scope_otg_added, " places "), ""),
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(scope_otg_added, " places "), ""),
       "(", project_name, ") "
     ),
-    project_type == "Addition" ~ str_c(
+    project_type == "Addition" ~ stringr::str_c(
       "Un agrandissement à ", project_name,
-      if_else(scope_otg_added > 0, str_c(" ajoutant ", scope_otg_added, " places "), "")
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(" ajoutant ", scope_otg_added, " places "), "")
     ),
-    project_type == "Retrofit" ~ str_c(
+    project_type == "Retrofit" ~ stringr::str_c(
       "Une rénovation à ", project_name,
-      if_else(scope_otg_added > 0, str_c(" ajoutant ", scope_otg_added, " places "), "")
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(" ajoutant ", scope_otg_added, " places "), "")
     ),
-    project_type == "Purchase" ~ str_c(
+    project_type == "Purchase" ~ stringr::str_c(
       "L'achat d'une école ", panel_long,
-      if_else(scope_otg_added > 0, str_c(" ajoutant ", scope_otg_added, " places "), "")
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(" ajoutant ", scope_otg_added, " places "), "")
     ),
-    project_type == "Demolition" ~ str_c("Une démolition à ", project_name, " "),
-    project_type == "Land Acquisition" ~ str_c("L'acquisition d'un terrain à ", project_name, " "),
-    TRUE ~ str_c(
+    project_type == "Demolition" ~ stringr::str_c("Une démolition à ", project_name, " "),
+    project_type == "Land Acquisition" ~ stringr::str_c("L'acquisition d'un terrain à ", project_name, " "),
+    TRUE ~ stringr::str_c(
       "Un projet à ", project_name,
-      if_else(scope_otg_added > 0, str_c(" ajoutant ", scope_otg_added, " places "), "")
+      dplyr::if_else(scope_otg_added > 0, stringr::str_c(" ajoutant ", scope_otg_added, " places "), "")
     )
   )
 }
 
 #' @keywords internal
 get_description_child_care_f <- function(scope_cc_spaces_added) {
-  case_when(
-    scope_cc_spaces_added > 0 ~ str_c("(y compris ", scope_cc_spaces_added, " places en services de garde agréés) "),
+  dplyr::case_when(
+    scope_cc_spaces_added > 0 ~ stringr::str_c("(y compris ", scope_cc_spaces_added, " places en services de garde agréés) "),
     TRUE ~ ""
   )
 }
 
 #' @keywords internal
 get_description_category_f <- function(project_category, location_city) {
-  city_part <- if_else(!is.na(location_city), str_c(" à ", location_city), "")
-  case_when(
-    project_category == "ASD Pilot" ~ str_c("pour répondre aux besoins liés aux TSA", city_part, "."),
-    project_category == "Accommodation Pressure" ~ str_c("pour répondre à la pression d'accueil", city_part, "."),
-    project_category %in% c("Child Care", "Community Based Child Care") ~ str_c("pour répondre aux besoins en services de garde", city_part, "."),
-    project_category == "Condition" ~ str_c("pour améliorer l'état des installations", city_part, "."),
-    project_category == "Consolidation" ~ str_c("pour regrouper des écoles locales", city_part, "."),
-    project_category == "FDK" ~ str_c("pour offrir des places en Maternelle à temps plein", city_part, "."),
-    project_category %in% c("FL Capital Transitional", "French Language Access") ~ str_c("pour améliorer l'accès à l'éducation en langue française", city_part, "."),
-    TRUE ~ str_c(city_part)
+  city_part <- dplyr::if_else(!is.na(location_city), stringr::str_c(" à ", location_city), "")
+  dplyr::case_when(
+    project_category == "ASD Pilot" ~ stringr::str_c("pour répondre aux besoins liés aux TSA", city_part, "."),
+    project_category == "Accommodation Pressure" ~ stringr::str_c("pour répondre à la pression d'accueil", city_part, "."),
+    project_category %in% c("Child Care", "Community Based Child Care") ~ stringr::str_c("pour répondre aux besoins en services de garde", city_part, "."),
+    project_category == "Condition" ~ stringr::str_c("pour améliorer l'état des installations", city_part, "."),
+    project_category == "Consolidation" ~ stringr::str_c("pour regrouper des écoles locales", city_part, "."),
+    project_category == "FDK" ~ stringr::str_c("pour offrir des places en Maternelle à temps plein", city_part, "."),
+    project_category %in% c("FL Capital Transitional", "French Language Access") ~ stringr::str_c("pour améliorer l'accès à l'éducation en langue française", city_part, "."),
+    TRUE ~ stringr::str_c(city_part)
   ) %>%
-    str_trim()
+    stringr::str_trim()
 }
 
 #' Add a French Project Description Column
@@ -258,28 +258,28 @@ get_description_category_f <- function(project_category, location_city) {
 #' @export
 add_description_f <- function(pt) {
   pt %>%
-    mutate(
+    dplyr::mutate(
       panel_long = get_panel_long_f(panel),
       description_project_type = get_description_project_type_f(
         project_type,
         scope_otg_added,
         panel_long,
         project_name %>%
-          str_remove(" Addition$") %>%
-          str_squish()
+          stringr::str_remove(" Addition$") %>%
+          stringr::str_squish()
       ),
       description_child_care = get_description_child_care_f(scope_cc_spaces_added),
       description_category = get_description_category_f(project_category, location_city),
-      description_f = if_else(is.na(project_name)|panel == "OFF-ADM", NA_character_,
-                              pmap_chr(
+      description_f = dplyr::if_else(is.na(project_name)|panel == "OFF-ADM", NA_character_,
+                              purrr::pmap_chr(
                                 list(description_project_type, description_child_care, description_category) %>%
-                                  map(replace_na, ""),
+                                  purrr::map(tidyr::replace_na, ""),
                                 ~ c(..1, ..2, ..3) %>%
-                                  discard(~ .x == "") %>%
-                                  str_c(collapse = " ") %>%
-                                  str_replace_all("\\)\\s*\\(", ", ") %>%
-                                  str_squish()
+                                  purrr::discard(~ .x == "") %>%
+                                  stringr::str_c(collapse = " ") %>%
+                                  stringr::str_replace_all("\\)\\s*\\(", ", ") %>%
+                                  stringr::str_squish()
                               ))
     ) %>%
-    select(-panel_long, -description_project_type, -description_child_care, -description_category)
+    dplyr::select(-panel_long, -description_project_type, -description_child_care, -description_category)
 }

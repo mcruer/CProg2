@@ -180,7 +180,7 @@ monthly <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL
 #' @export
 events <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
   ezekiel::ezql_table(table = "Events", as_of, schema, database, address) %>%
-    select(all_of(events_columns()))
+    dplyr::select(dplyr::all_of(events_columns()))
 }
 
 #' Convert Event-Level Data to Project-Level Data
@@ -230,7 +230,7 @@ pt <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
       dplyr::across(dplyr::all_of(columns_to_sum), sum)
     ) %>%
     dplyr::ungroup() %>%
-    select(all_of(pt_columns()))
+    dplyr::select(dplyr::all_of(pt_columns()))
 }
 
 
