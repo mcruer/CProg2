@@ -258,7 +258,7 @@ comms_data <- function(
   frank <- frank(as_of)
   pt <- pt(as_of)
 
-  frank %>%
+  out <- frank %>%
     dplyr::filter(primary_capital_project) %>%
     gplyr::filter_out(project_id, "19-337") %>%
     gplyr::filter_out(project_id, "34.2-008") %>%
@@ -272,6 +272,16 @@ comms_data <- function(
       french_board = dplyr::between(board_number, 55.5, 99)
     ) %>%
     dplyr::select(project_id, is_childcare, french_board)
+
+  if(since_2018){
+    out <- out %>%
+      #This project is associated with an earlier project that predates
+      #June 1, 2018. We decided that in this case, the related projects should
+      #be removed as well.
+      gplyr::filter_out(project_id, "58-075-01")
+  }
+
+  return(out)
 
 
 }
