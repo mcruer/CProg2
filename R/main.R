@@ -38,6 +38,7 @@ events_columns <- function(){
     "scope_otg_added",
     "scope_cc_rooms_added",
     "scope_cc_spaces_added",
+    "scope_cc_spaces_net_change",
     "scope_eo_rooms_added",
     "funding_total",
     "funding_cp",
