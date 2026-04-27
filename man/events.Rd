@@ -4,10 +4,19 @@
 \alias{events}
 \title{Retrieve Events Data}
 \usage{
-events(as_of = NULL, schema = NULL, database = NULL, address = NULL)
+events(
+  as_of = NULL,
+  everything = FALSE,
+  schema = NULL,
+  database = NULL,
+  address = NULL
+)
 }
 \arguments{
 \item{as_of}{The date of the Events data to be pulled.}
+
+\item{everything}{If FALSE (default), returns only the columns in `events_columns()`.
+Set to TRUE to return all columns.}
 
 \item{schema}{The schema name (default: NULL, will use `ezql_details_schema`).}
 

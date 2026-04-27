@@ -4,10 +4,19 @@
 \alias{monthly}
 \title{Retrieve Monthly Data}
 \usage{
-monthly(as_of = NULL, schema = NULL, database = NULL, address = NULL)
+monthly(
+  as_of = NULL,
+  everything = FALSE,
+  schema = NULL,
+  database = NULL,
+  address = NULL
+)
 }
 \arguments{
 \item{as_of}{The date of the Monthly data to be pulled.}
+
+\item{everything}{If FALSE (default), intended to return only a default column set once
+one is defined. Currently has no effect.}
 
 \item{schema}{The schema name (default: NULL, will use `ezql_details_schema`).}
 

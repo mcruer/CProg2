@@ -4,10 +4,19 @@
 \alias{pt}
 \title{Convert Event-Level Data to Project-Level Data}
 \usage{
-pt(as_of = NULL, schema = NULL, database = NULL, address = NULL)
+pt(
+  as_of = NULL,
+  everything = FALSE,
+  schema = NULL,
+  database = NULL,
+  address = NULL
+)
 }
 \arguments{
 \item{as_of}{The date of the Events data to be pulled.}
+
+\item{everything}{If FALSE (default), returns only the columns in `pt_columns()`.
+Set to TRUE to return all columns.}
 
 \item{schema}{The schema name (default: NULL, will use `ezql_details_schema`).}
 
