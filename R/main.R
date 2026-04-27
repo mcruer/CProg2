@@ -272,6 +272,8 @@ frank <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NU
   result <- ezekiel::ezql_table(table = "Frankenstein", as_of = as_of, schema = schema, database = database, address = address)
   if (!everything) {
     result <- dplyr::select(result, dplyr::all_of(frank_columns()))
+  } else {
+    result <- dplyr::relocate(result, date_site_purchase, .before = date_construction)
   }
   result
 }
