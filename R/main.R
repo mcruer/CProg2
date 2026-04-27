@@ -235,19 +235,45 @@ pt <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
 }
 
 
+#' Original Frankenstein column names
+#'
+#' @return A character vector of the original Frankenstein column names.
+#' @export
+frank_columns <- function() {
+  c(
+    "project_id",
+    "date_construction",
+    "date_opening",
+    "date_ori",
+    "date_atp",
+    "date_most_recent_event",
+    "construction_status",
+    "project_duration_days",
+    "primary_capital_project",
+    "construction_status_detailed"
+  )
+}
+
+
 #' Retrieve Frankenstein Data
 #'
 #' This function retrieves data from the specified SQL table.
 #'
 #' @param as_of The date of the Frankenstein data to be pulled.
+#' @param everything If FALSE (default), returns only the original columns. Set
+#'   to TRUE to return all columns including newly added ones.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
 #' @importFrom ezekiel ezql_get
 #' @export
-frank <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_table (table = "Frankenstein", as_of = as_of, schema = schema, database = database, address = address)
+frank <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NULL, address = NULL) {
+  result <- ezekiel::ezql_table(table = "Frankenstein", as_of = as_of, schema = schema, database = database, address = address)
+  if (!everything) {
+    result <- dplyr::select(result, dplyr::all_of(frank_columns()))
+  }
+  result
 }
 
 
