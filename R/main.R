@@ -157,13 +157,15 @@ pt_columns <- function() {
 #' This function retrieves data from the specified SQL table.
 #'
 #' @param as_of The date of the Monthly data to be pulled.
+#' @param everything If FALSE (default), intended to return only a default column set once
+#'   one is defined. Currently has no effect.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
 #' @importFrom ezekiel ezql_table
 #' @export
-monthly <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+monthly <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NULL, address = NULL) {
   ezekiel::ezql_table(table = "Monthly", as_of = as_of, schema=schema, database=database, address=address)
 }
 
@@ -173,13 +175,15 @@ monthly <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL
 #' This function retrieves data from the specified SQL table.
 #'
 #' @param as_of The date of the Events data to be pulled.
+#' @param everything If FALSE (default), intended to return only the default column set once
+#'   column-filtering logic is wired up. Currently has no effect.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
 #' @return A tibble containing the data from the specified SQL table.
 #' @importFrom ezekiel ezql_table
 #' @export
-events <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+events <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NULL, address = NULL) {
   ezekiel::ezql_table(table = "Events", as_of, schema, database, address) %>%
     dplyr::select(dplyr::all_of(events_columns()))
 }
@@ -190,6 +194,9 @@ events <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL)
 #' specific columns and filling down other columns.
 #'
 #' @param as_of The date of the Events data to be pulled.
+#' @param everything If FALSE (default), intended to return only the default column set once
+#'   column-filtering logic is wired up. Currently has no effect. Note: will need to be
+#'   passed through to events() when implemented.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
@@ -198,7 +205,8 @@ events <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL)
 #' @importFrom dplyr group_by mutate arrange summarize ungroup last across all_of any_of starts_with select
 #' @importFrom tidyr fill
 #' @export
-pt <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+pt <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NULL, address = NULL) {
+  # TODO: pass everything through to events() when column-filtering is implemented
   events_data <- events(as_of = as_of, schema = schema, database = database, address = address) %>%
     suppressWarnings()
 
