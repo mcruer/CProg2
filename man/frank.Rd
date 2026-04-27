@@ -4,10 +4,19 @@
 \alias{frank}
 \title{Retrieve Frankenstein Data}
 \usage{
-frank(as_of = NULL, schema = NULL, database = NULL, address = NULL)
+frank(
+  as_of = NULL,
+  everything = FALSE,
+  schema = NULL,
+  database = NULL,
+  address = NULL
+)
 }
 \arguments{
 \item{as_of}{The date of the Frankenstein data to be pulled.}
+
+\item{everything}{If FALSE (default), returns only the original columns. Set
+to TRUE to return all columns including newly added ones.}
 
 \item{schema}{The schema name (default: NULL, will use `ezql_details_schema`).}
 
