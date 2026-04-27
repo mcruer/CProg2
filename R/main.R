@@ -175,8 +175,8 @@ monthly <- function(as_of = NULL, everything = FALSE, schema = NULL, database = 
 #' This function retrieves data from the specified SQL table.
 #'
 #' @param as_of The date of the Events data to be pulled.
-#' @param everything If FALSE (default), intended to return only the default column set once
-#'   column-filtering logic is wired up. Currently has no effect.
+#' @param everything If FALSE (default), returns only the columns in `events_columns()`.
+#'   Set to TRUE to return all columns.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
@@ -184,8 +184,11 @@ monthly <- function(as_of = NULL, everything = FALSE, schema = NULL, database = 
 #' @importFrom ezekiel ezql_table
 #' @export
 events <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NULL, address = NULL) {
-  ezekiel::ezql_table(table = "Events", as_of, schema, database, address) %>%
-    dplyr::select(dplyr::all_of(events_columns()))
+  result <- ezekiel::ezql_table(table = "Events", as_of, schema, database, address)
+  if (!everything) {
+    result <- dplyr::select(result, dplyr::all_of(events_columns()))
+  }
+  result
 }
 
 #' Convert Event-Level Data to Project-Level Data
@@ -194,9 +197,8 @@ events <- function(as_of = NULL, everything = FALSE, schema = NULL, database = N
 #' specific columns and filling down other columns.
 #'
 #' @param as_of The date of the Events data to be pulled.
-#' @param everything If FALSE (default), intended to return only the default column set once
-#'   column-filtering logic is wired up. Currently has no effect. Note: will need to be
-#'   passed through to events() when implemented.
+#' @param everything If FALSE (default), returns only the columns in `pt_columns()`.
+#'   Set to TRUE to return all columns.
 #' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
 #' @param database The database name (default: NULL, will use `ezql_details_db`).
 #' @param address The server address (default: NULL, will use `ezql_details_add`).
@@ -206,8 +208,7 @@ events <- function(as_of = NULL, everything = FALSE, schema = NULL, database = N
 #' @importFrom tidyr fill
 #' @export
 pt <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NULL, address = NULL) {
-  # TODO: pass everything through to events() when column-filtering is implemented
-  events_data <- events(as_of = as_of, schema = schema, database = database, address = address) %>%
+  events_data <- events(as_of = as_of, everything = TRUE, schema = schema, database = database, address = address) %>%
     suppressWarnings()
 
   columns_to_sum <- events_data %>%
@@ -239,7 +240,7 @@ pt <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NULL,
       dplyr::across(dplyr::all_of(columns_to_sum), sum)
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(dplyr::all_of(pt_columns()))
+    {if (!everything) dplyr::select(., dplyr::all_of(pt_columns())) else .}
 }
 
 
