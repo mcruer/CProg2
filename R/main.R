@@ -170,6 +170,90 @@ monthly <- function(as_of = NULL, everything = FALSE, schema = NULL, database = 
 }
 
 
+#' Retrieve Monthly All Data
+#'
+#' This function retrieves data from the specified SQL table.
+#'
+#' @param as_of The date of the Monthly All data to be pulled.
+#' @param everything If FALSE (default), intended to return only a default column set once
+#'   one is defined. Currently has no effect.
+#' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
+#' @param database The database name (default: NULL, will use `ezql_details_db`).
+#' @param address The server address (default: NULL, will use `ezql_details_add`).
+#' @return A tibble containing the data from the specified SQL table.
+#' @importFrom ezekiel ezql_table
+#' @export
+monthly_all <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_table(table = "monthly_all", as_of = as_of, schema=schema, database=database, address=address)
+}
+
+
+#' Retrieve Boards Data
+#'
+#' This function retrieves data from the specified SQL table.
+#'
+#' @param as_of The date of the Boards data to be pulled.
+#' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
+#' @param database The database name (default: NULL, will use `ezql_details_db`).
+#' @param address The server address (default: NULL, will use `ezql_details_add`).
+#' @return A tibble containing the data from the specified SQL table.
+#' @importFrom ezekiel ezql_table
+#' @export
+boards <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_table(table = "boards", as_of = as_of, schema=schema, database=database, address=address)
+}
+
+
+#' Retrieve Contacts Data
+#'
+#' This function retrieves data from the specified SQL table.
+#'
+#' @param as_of The date of the Contacts data to be pulled.
+#' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
+#' @param database The database name (default: NULL, will use `ezql_details_db`).
+#' @param address The server address (default: NULL, will use `ezql_details_add`).
+#' @return A tibble containing the data from the specified SQL table.
+#' @importFrom ezekiel ezql_table
+#' @export
+contacts <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_table(table = "contacts", as_of = as_of, schema=schema, database=database, address=address)
+}
+
+
+#' Retrieve Commitments Data
+#'
+#' This function retrieves data from the specified SQL table.
+#'
+#' @param as_of The date of the Commitments data to be pulled.
+#' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
+#' @param database The database name (default: NULL, will use `ezql_details_db`).
+#' @param address The server address (default: NULL, will use `ezql_details_add`).
+#' @return A tibble containing the data from the specified SQL table.
+#' @importFrom ezekiel ezql_table
+#' @export
+commitments <- function(as_of = NULL, schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_table(table = "commitments", as_of = as_of, schema=schema, database=database, address=address)
+}
+
+
+#' Retrieve Commitments All Data
+#'
+#' This function retrieves data from the specified SQL table.
+#'
+#' @param as_of The date of the Commitments All data to be pulled.
+#' @param everything If FALSE (default), intended to return only a default column set once
+#'   one is defined. Currently has no effect.
+#' @param schema The schema name (default: NULL, will use `ezql_details_schema`).
+#' @param database The database name (default: NULL, will use `ezql_details_db`).
+#' @param address The server address (default: NULL, will use `ezql_details_add`).
+#' @return A tibble containing the data from the specified SQL table.
+#' @importFrom ezekiel ezql_table
+#' @export
+commitments_all <- function(as_of = NULL, everything = FALSE, schema = NULL, database = NULL, address = NULL) {
+  ezekiel::ezql_table(table = "commitments_all", as_of = as_of, schema=schema, database=database, address=address)
+}
+
+
 #' Retrieve Events Data
 #'
 #' This function retrieves data from the specified SQL table.
